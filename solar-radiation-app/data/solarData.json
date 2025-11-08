@@ -1,10 +1,10 @@
 {
   "location": {
-    "city": "Madrid",
-    "country": "España",
-    "latitude": 40.4168,
-    "longitude": -3.7038,
-    "timezone": "Europe/Madrid"
+    "city": "Quito",
+    "country": "Ecuador",
+    "latitude": -0.1807,
+    "longitude": -78.4678,
+    "timezone": "America/Guayaquil"
   },
   "lastUpdated": "2024-11-08T10:30:00Z",
   "currentConditions": {

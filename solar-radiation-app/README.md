@@ -110,11 +110,11 @@ La aplicación utiliza un archivo JSON local (`data/solarData.json`) que simula 
 ```json
 {
   "location": {
-    "city": "Madrid",
-    "country": "España",
-    "latitude": 40.4168,
-    "longitude": -3.7038,
-    "timezone": "Europe/Madrid"
+    "city": "Quito",
+    "country": "Ecuador",
+    "latitude": -0.1807,
+    "longitude": -78.4678,
+    "timezone": "America/Guayaquil"
   },
   "days": [
     {
@@ -145,7 +145,7 @@ La aplicación utiliza un archivo JSON local (`data/solarData.json`) que simula 
 ### Datos incluidos:
 
 - **3 días de datos históricos** con lecturas por hora (24 lecturas/día)
-- **Ubicación**: Madrid, España
+- **Ubicación**: Quito, Ecuador
 - **Condiciones climáticas**: Soleado, Nublado, Parcialmente nublado
 - **Métricas por hora**: Radiación, cobertura de nubes, temperatura
 - **Resumen del día**: Máximo, mínimo, promedio, índice UV
@@ -178,10 +178,20 @@ APIs recomendadas para datos solares:
 - **Solar Radiation Database** (NREL)
 - **Weather API** (weatherapi.com)
 
+## 📱 Optimización de Pantalla
+
+La aplicación ha sido optimizada para visualizarse correctamente en dispositivos móviles modernos, incluyendo:
+- **iPhone 15 Pro Max**: Espaciados y tamaños ajustados para pantalla completa
+- **Diseño responsive**: Se adapta automáticamente al tamaño de pantalla
+- **ScrollView**: Todo el contenido es desplazable para garantizar accesibilidad
+- **Componentes compactos**: Tamaños reducidos para maximizar contenido visible
+
 ## 📝 Notas
 
 - Los datos son completamente simulados con fines demostrativos
 - El archivo JSON simula una respuesta de backend real
 - La aplicación muestra datos del "día actual" (primer día del array)
+- Ubicación configurada: Quito, Ecuador
 - La aplicación es compatible con iOS y Android a través de Expo Go
 - Diseñada para ser fácilmente migrable a una API real
+- Optimizada para pantallas grandes (probado en iPhone 15 Pro Max)
