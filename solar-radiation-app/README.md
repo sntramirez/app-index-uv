@@ -101,8 +101,87 @@ La aplicación genera datos simulados de radiación solar que siguen un patrón 
 | Muy Alto | 600-800 | Rojo (#ef4444) | Protección extra necesaria |
 | Extremo | 800+ | Púrpura (#a855f7) | Evite exposición al sol |
 
+## 📂 Backend Simulado (JSON)
+
+La aplicación utiliza un archivo JSON local (`data/solarData.json`) que simula una respuesta de backend/API. Este archivo contiene:
+
+### Estructura del JSON:
+
+```json
+{
+  "location": {
+    "city": "Madrid",
+    "country": "España",
+    "latitude": 40.4168,
+    "longitude": -3.7038,
+    "timezone": "Europe/Madrid"
+  },
+  "days": [
+    {
+      "date": "2024-11-08",
+      "hourlyData": [
+        {
+          "hour": 0-23,
+          "radiation": 0-1000,
+          "cloudCover": 0-100,
+          "temperature": -10 a 40
+        }
+      ],
+      "summary": {
+        "maxRadiation": número,
+        "minRadiation": número,
+        "avgRadiation": número,
+        "uvIndex": 0-11
+      }
+    }
+  ],
+  "forecast": {
+    "nextDays": []
+  },
+  "recommendations": {}
+}
+```
+
+### Datos incluidos:
+
+- **3 días de datos históricos** con lecturas por hora (24 lecturas/día)
+- **Ubicación**: Madrid, España
+- **Condiciones climáticas**: Soleado, Nublado, Parcialmente nublado
+- **Métricas por hora**: Radiación, cobertura de nubes, temperatura
+- **Resumen del día**: Máximo, mínimo, promedio, índice UV
+- **Pronóstico**: 2 días adicionales con proyecciones
+- **Recomendaciones**: Consejos de protección solar por nivel
+
+### Ventajas de usar JSON local:
+
+1. **Desarrollo sin conexión**: No requiere API externa ni internet
+2. **Datos consistentes**: Siempre muestra los mismos valores para testing
+3. **Rápido**: Sin latencia de red
+4. **Fácil de modificar**: Puedes editar el JSON para probar diferentes escenarios
+5. **Migración sencilla**: Fácil cambiar a una API real en producción
+
+### Cómo usar datos reales:
+
+Para conectar con una API real, reemplaza el import del JSON por un fetch:
+
+```javascript
+// En lugar de:
+import solarDataJson from './data/solarData.json';
+
+// Usa:
+const response = await fetch('https://api.ejemplo.com/solar-data');
+const solarDataJson = await response.json();
+```
+
+APIs recomendadas para datos solares:
+- **OpenWeatherMap** (UV Index API)
+- **Solar Radiation Database** (NREL)
+- **Weather API** (weatherapi.com)
+
 ## 📝 Notas
 
 - Los datos son completamente simulados con fines demostrativos
-- Para datos reales, se podría integrar con APIs como OpenWeatherMap o servicios especializados en datos solares
+- El archivo JSON simula una respuesta de backend real
+- La aplicación muestra datos del "día actual" (primer día del array)
 - La aplicación es compatible con iOS y Android a través de Expo Go
+- Diseñada para ser fácilmente migrable a una API real

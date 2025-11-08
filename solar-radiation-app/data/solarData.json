@@ -1,0 +1,171 @@
+{
+  "location": {
+    "city": "Madrid",
+    "country": "España",
+    "latitude": 40.4168,
+    "longitude": -3.7038,
+    "timezone": "Europe/Madrid"
+  },
+  "lastUpdated": "2024-11-08T10:30:00Z",
+  "currentConditions": {
+    "timestamp": "2024-11-08T10:30:00Z",
+    "cloudCover": 20,
+    "weatherCondition": "Parcialmente nublado",
+    "temperature": 18,
+    "humidity": 65
+  },
+  "days": [
+    {
+      "date": "2024-11-08",
+      "dayOfWeek": "Viernes",
+      "weatherCondition": "Soleado",
+      "sunrise": "07:45",
+      "sunset": "18:15",
+      "hourlyData": [
+        { "hour": 0, "radiation": 0, "cloudCover": 10, "temperature": 12 },
+        { "hour": 1, "radiation": 0, "cloudCover": 10, "temperature": 11 },
+        { "hour": 2, "radiation": 0, "cloudCover": 15, "temperature": 11 },
+        { "hour": 3, "radiation": 0, "cloudCover": 15, "temperature": 10 },
+        { "hour": 4, "radiation": 0, "cloudCover": 20, "temperature": 10 },
+        { "hour": 5, "radiation": 0, "cloudCover": 20, "temperature": 10 },
+        { "hour": 6, "radiation": 15, "cloudCover": 25, "temperature": 11 },
+        { "hour": 7, "radiation": 125, "cloudCover": 20, "temperature": 13 },
+        { "hour": 8, "radiation": 310, "cloudCover": 15, "temperature": 15 },
+        { "hour": 9, "radiation": 520, "cloudCover": 10, "temperature": 17 },
+        { "hour": 10, "radiation": 715, "cloudCover": 10, "temperature": 19 },
+        { "hour": 11, "radiation": 865, "cloudCover": 15, "temperature": 20 },
+        { "hour": 12, "radiation": 950, "cloudCover": 20, "temperature": 21 },
+        { "hour": 13, "radiation": 935, "cloudCover": 20, "temperature": 21 },
+        { "hour": 14, "radiation": 820, "cloudCover": 25, "temperature": 20 },
+        { "hour": 15, "radiation": 650, "cloudCover": 30, "temperature": 19 },
+        { "hour": 16, "radiation": 445, "cloudCover": 25, "temperature": 18 },
+        { "hour": 17, "radiation": 235, "cloudCover": 20, "temperature": 16 },
+        { "hour": 18, "radiation": 75, "cloudCover": 15, "temperature": 15 },
+        { "hour": 19, "radiation": 5, "cloudCover": 10, "temperature": 14 },
+        { "hour": 20, "radiation": 0, "cloudCover": 10, "temperature": 13 },
+        { "hour": 21, "radiation": 0, "cloudCover": 10, "temperature": 13 },
+        { "hour": 22, "radiation": 0, "cloudCover": 15, "temperature": 12 },
+        { "hour": 23, "radiation": 0, "cloudCover": 15, "temperature": 12 }
+      ],
+      "summary": {
+        "maxRadiation": 950,
+        "minRadiation": 0,
+        "avgRadiation": 336,
+        "peakHour": 12,
+        "totalDaylight": 10.5,
+        "uvIndex": 6
+      }
+    },
+    {
+      "date": "2024-11-09",
+      "dayOfWeek": "Sábado",
+      "weatherCondition": "Nublado",
+      "sunrise": "07:46",
+      "sunset": "18:14",
+      "hourlyData": [
+        { "hour": 0, "radiation": 0, "cloudCover": 50, "temperature": 13 },
+        { "hour": 1, "radiation": 0, "cloudCover": 55, "temperature": 13 },
+        { "hour": 2, "radiation": 0, "cloudCover": 55, "temperature": 12 },
+        { "hour": 3, "radiation": 0, "cloudCover": 60, "temperature": 12 },
+        { "hour": 4, "radiation": 0, "cloudCover": 60, "temperature": 12 },
+        { "hour": 5, "radiation": 0, "cloudCover": 65, "temperature": 12 },
+        { "hour": 6, "radiation": 8, "cloudCover": 65, "temperature": 12 },
+        { "hour": 7, "radiation": 85, "cloudCover": 70, "temperature": 13 },
+        { "hour": 8, "radiation": 210, "cloudCover": 70, "temperature": 14 },
+        { "hour": 9, "radiation": 365, "cloudCover": 65, "temperature": 15 },
+        { "hour": 10, "radiation": 510, "cloudCover": 60, "temperature": 16 },
+        { "hour": 11, "radiation": 625, "cloudCover": 55, "temperature": 17 },
+        { "hour": 12, "radiation": 685, "cloudCover": 50, "temperature": 18 },
+        { "hour": 13, "radiation": 670, "cloudCover": 55, "temperature": 18 },
+        { "hour": 14, "radiation": 590, "cloudCover": 60, "temperature": 17 },
+        { "hour": 15, "radiation": 460, "cloudCover": 65, "temperature": 17 },
+        { "hour": 16, "radiation": 310, "cloudCover": 70, "temperature": 16 },
+        { "hour": 17, "radiation": 165, "cloudCover": 70, "temperature": 15 },
+        { "hour": 18, "radiation": 50, "cloudCover": 75, "temperature": 14 },
+        { "hour": 19, "radiation": 3, "cloudCover": 75, "temperature": 14 },
+        { "hour": 20, "radiation": 0, "cloudCover": 75, "temperature": 13 },
+        { "hour": 21, "radiation": 0, "cloudCover": 70, "temperature": 13 },
+        { "hour": 22, "radiation": 0, "cloudCover": 70, "temperature": 13 },
+        { "hour": 23, "radiation": 0, "cloudCover": 65, "temperature": 13 }
+      ],
+      "summary": {
+        "maxRadiation": 685,
+        "minRadiation": 0,
+        "avgRadiation": 243,
+        "peakHour": 12,
+        "totalDaylight": 10.5,
+        "uvIndex": 4
+      }
+    },
+    {
+      "date": "2024-11-10",
+      "dayOfWeek": "Domingo",
+      "weatherCondition": "Muy soleado",
+      "sunrise": "07:47",
+      "sunset": "18:13",
+      "hourlyData": [
+        { "hour": 0, "radiation": 0, "cloudCover": 5, "temperature": 11 },
+        { "hour": 1, "radiation": 0, "cloudCover": 5, "temperature": 10 },
+        { "hour": 2, "radiation": 0, "cloudCover": 5, "temperature": 10 },
+        { "hour": 3, "radiation": 0, "cloudCover": 5, "temperature": 9 },
+        { "hour": 4, "radiation": 0, "cloudCover": 5, "temperature": 9 },
+        { "hour": 5, "radiation": 0, "cloudCover": 0, "temperature": 9 },
+        { "hour": 6, "radiation": 20, "cloudCover": 0, "temperature": 10 },
+        { "hour": 7, "radiation": 145, "cloudCover": 0, "temperature": 12 },
+        { "hour": 8, "radiation": 340, "cloudCover": 0, "temperature": 14 },
+        { "hour": 9, "radiation": 560, "cloudCover": 0, "temperature": 16 },
+        { "hour": 10, "radiation": 755, "cloudCover": 5, "temperature": 18 },
+        { "hour": 11, "radiation": 905, "cloudCover": 5, "temperature": 20 },
+        { "hour": 12, "radiation": 985, "cloudCover": 5, "temperature": 21 },
+        { "hour": 13, "radiation": 970, "cloudCover": 10, "temperature": 21 },
+        { "hour": 14, "radiation": 860, "cloudCover": 10, "temperature": 21 },
+        { "hour": 15, "radiation": 690, "cloudCover": 10, "temperature": 20 },
+        { "hour": 16, "radiation": 475, "cloudCover": 15, "temperature": 19 },
+        { "hour": 17, "radiation": 255, "cloudCover": 15, "temperature": 17 },
+        { "hour": 18, "radiation": 85, "cloudCover": 15, "temperature": 15 },
+        { "hour": 19, "radiation": 8, "cloudCover": 10, "temperature": 14 },
+        { "hour": 20, "radiation": 0, "cloudCover": 10, "temperature": 13 },
+        { "hour": 21, "radiation": 0, "cloudCover": 10, "temperature": 12 },
+        { "hour": 22, "radiation": 0, "cloudCover": 5, "temperature": 12 },
+        { "hour": 23, "radiation": 0, "cloudCover": 5, "temperature": 11 }
+      ],
+      "summary": {
+        "maxRadiation": 985,
+        "minRadiation": 0,
+        "avgRadiation": 354,
+        "peakHour": 12,
+        "totalDaylight": 10.4,
+        "uvIndex": 6
+      }
+    }
+  ],
+  "forecast": {
+    "trend": "stable",
+    "nextDays": [
+      {
+        "date": "2024-11-11",
+        "dayOfWeek": "Lunes",
+        "condition": "Parcialmente nublado",
+        "maxRadiation": 780,
+        "avgRadiation": 290,
+        "uvIndex": 5
+      },
+      {
+        "date": "2024-11-12",
+        "dayOfWeek": "Martes",
+        "condition": "Soleado",
+        "maxRadiation": 920,
+        "avgRadiation": 340,
+        "uvIndex": 6
+      }
+    ]
+  },
+  "alerts": [],
+  "recommendations": {
+    "low": "No se necesita protección especial. Puedes permanecer en el exterior de forma segura.",
+    "moderate": "Se recomienda protección solar. Usa gafas de sol y protector solar SPF 30+.",
+    "high": "Se necesita protección. Usa sombrero, gafas de sol y protector solar SPF 30+. Busca sombra durante el mediodía.",
+    "veryHigh": "Se requiere protección extra. Usa ropa protectora, sombrero de ala ancha, gafas de sol y protector solar SPF 50+. Evita el sol entre las 10:00 y las 16:00.",
+    "extreme": "Evite la exposición al sol. Si debe salir, use protección completa: ropa de manga larga, sombrero, gafas de sol y protector solar SPF 50+. Permanezca en la sombra."
+  }
+}

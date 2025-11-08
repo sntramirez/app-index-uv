@@ -2,6 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useState, useEffect } from 'react';
+import solarDataJson from './data/solarData.json';
 
 export default function App() {
   const [solarData, setSolarData] = useState({
@@ -19,6 +20,11 @@ export default function App() {
     color: '#10b981',
     backgroundColor: '#d1fae5',
     description: 'Protección mínima requerida'
+  });
+  const [locationInfo, setLocationInfo] = useState({
+    city: '',
+    condition: '',
+    uvIndex: 0
   });
 
   // Función para determinar el nivel de radiación
@@ -69,54 +75,50 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Generar datos simulados de radiación solar (W/m²)
-    // La radiación solar típica va de 0 a ~1000 W/m²
-    const hours = Array.from({ length: 24 }, (_, i) => i);
+    // Cargar datos desde el archivo JSON
     const currentHour = new Date().getHours();
 
-    // Simular curva de radiación solar (patrón gaussiano centrado en mediodía)
-    const radiationValues = hours.map(hour => {
-      if (hour < 6 || hour > 20) return 0; // Sin radiación de noche
+    // Usar el primer día del array (día actual)
+    const todayData = solarDataJson.days[0];
 
-      // Curva gaussiana con pico al mediodía (12:00)
-      const centerHour = 12;
-      const spread = 4;
-      const maxRadiation = 1000;
+    // Extraer valores de radiación por hora
+    const radiationValues = todayData.hourlyData.map(item => item.radiation);
 
-      const exponent = -Math.pow(hour - centerHour, 2) / (2 * Math.pow(spread, 2));
-      const radiation = maxRadiation * Math.exp(exponent);
+    // Obtener el valor actual según la hora
+    const currentValue = todayData.hourlyData[currentHour].radiation;
 
-      // Agregar variación aleatoria (±10%)
-      const variation = radiation * 0.1 * (Math.random() - 0.5) * 2;
-      return Math.max(0, Math.round(radiation + variation));
+    // Establecer estadísticas desde el JSON
+    setStats({
+      max: todayData.summary.maxRadiation,
+      min: todayData.summary.minRadiation,
+      average: todayData.summary.avgRadiation,
+      current: currentValue
     });
 
-    // Calcular estadísticas
-    const dayValues = radiationValues.filter(v => v > 0);
-    const maxValue = Math.max(...dayValues);
-    const minValue = Math.min(...dayValues);
-    const avgValue = Math.round(dayValues.reduce((a, b) => a + b, 0) / dayValues.length);
-    const currentValue = radiationValues[currentHour];
-
-    setStats({
-      max: maxValue,
-      min: minValue,
-      average: avgValue,
-      current: currentValue
+    // Establecer información de ubicación
+    setLocationInfo({
+      city: solarDataJson.location.city,
+      condition: todayData.weatherCondition,
+      uvIndex: todayData.summary.uvIndex
     });
 
     // Establecer el nivel actual
     setCurrentLevel(getRadiationLevel(currentValue));
 
     // Preparar datos para el gráfico (mostrar cada 2 horas para mejor visualización)
-    const chartLabels = hours.filter((_, i) => i % 2 === 0).map(h => `${h}h`);
-    const chartData = radiationValues.filter((_, i) => i % 2 === 0);
+    const chartLabels = todayData.hourlyData
+      .filter((_, i) => i % 2 === 0)
+      .map(item => `${item.hour}h`);
+
+    const chartData = todayData.hourlyData
+      .filter((_, i) => i % 2 === 0)
+      .map(item => item.radiation);
 
     setSolarData({
       labels: chartLabels,
       datasets: [{
         data: chartData,
-        color: (opacity = 1) => `rgba(255, 165, 0, ${opacity})`, // Color naranja para el sol
+        color: (opacity = 1) => `rgba(245, 158, 11, ${opacity})`,
         strokeWidth: 3
       }]
     });
@@ -131,8 +133,9 @@ export default function App() {
 
         {/* Header minimalista */}
         <View style={styles.header}>
-          <Text style={styles.locationText}>📍 Mi Ubicación</Text>
+          <Text style={styles.locationText}>📍 {locationInfo.city}</Text>
           <Text style={styles.dateText}>{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</Text>
+          <Text style={styles.conditionText}>{locationInfo.condition} · UV Index: {locationInfo.uvIndex}</Text>
         </View>
 
         {/* Widget principal - Tarjeta de valor actual estilo iOS */}
@@ -226,9 +229,23 @@ export default function App() {
           </View>
         </View>
 
+        {/* Recomendaciones */}
+        <View style={styles.recommendationBox}>
+          <Text style={styles.recommendationTitle}>💡 Recomendación</Text>
+          <Text style={styles.recommendationText}>
+            {currentLevel.description}
+          </Text>
+        </View>
+
         {/* Footer discreto */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>Datos simulados con fines demostrativos</Text>
+          <Text style={styles.footerText}>
+            Última actualización: {new Date(solarDataJson.lastUpdated).toLocaleTimeString('es-ES', {
+              hour: '2-digit',
+              minute: '2-digit'
+            })}
+          </Text>
+          <Text style={styles.footerText}>Datos simulados · {solarDataJson.location.city}</Text>
         </View>
       </View>
     </ScrollView>
@@ -261,6 +278,12 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#94a3b8',
     textTransform: 'capitalize',
+    marginBottom: 4,
+  },
+  conditionText: {
+    fontSize: 13,
+    color: '#64748b',
+    fontWeight: '500',
   },
   mainWidget: {
     marginHorizontal: 30,
@@ -417,6 +440,26 @@ const styles = StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
+  recommendationBox: {
+    marginHorizontal: 30,
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#eff6ff',
+    borderRadius: 18,
+    borderLeftWidth: 4,
+    borderLeftColor: '#3b82f6',
+  },
+  recommendationTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: '#1e40af',
+    marginBottom: 8,
+  },
+  recommendationText: {
+    fontSize: 13,
+    color: '#1e40af',
+    lineHeight: 20,
+  },
   footer: {
     marginTop: 25,
     marginBottom: 10,
@@ -426,5 +469,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#94a3b8',
     fontStyle: 'italic',
+    marginBottom: 3,
   },
 });
