@@ -1,13 +1,16 @@
 # ☀️ Aplicación de Radiación Solar
 
-Aplicación móvil desarrollada en React Native con Expo que visualiza estadísticas de índices de radiación solar a lo largo del día.
+Aplicación móvil desarrollada en React Native con Expo que visualiza estadísticas de índices de radiación solar a lo largo del día con un diseño moderno estilo widget inspirado en aplicaciones iOS.
 
 ## 📱 Características
 
+- **Widget principal dinámico**: Tarjeta grande que muestra el nivel actual con colores que cambian según la intensidad de radiación
+- **Sistema de niveles inteligente**: 5 niveles de radiación con colores distintivos (Bajo, Moderado, Alto, Muy Alto, Extremo)
 - **Visualización en tiempo real**: Muestra la radiación solar actual basada en la hora del día
-- **Gráfico interactivo**: Gráfico de línea que muestra la evolución de la radiación solar durante 24 horas
-- **Estadísticas completas**: Valores máximo, mínimo y promedio de radiación
-- **Interfaz moderna**: Diseño oscuro con gradientes azules y acentos dorados
+- **Gráfico limpio**: Gráfico de línea minimalista con la evolución de radiación durante 24 horas
+- **Estadísticas compactas**: Mini widgets con valores máximo y promedio del día
+- **Diseño iOS moderno**: Interfaz clara con tarjetas tipo widget, sombras sutiles y tipografía San Francisco
+- **Barra de referencia**: Escala visual de colores para identificar niveles de radiación
 - **Datos simulados**: Utiliza un modelo gaussiano para simular patrones realistas de radiación solar
 
 ## 🚀 Cómo ejecutar la aplicación
@@ -75,14 +78,28 @@ La aplicación genera datos simulados de radiación solar que siguen un patrón 
 - **react-native-chart-kit**: Biblioteca para gráficos
 - **react-native-svg**: Soporte para gráficos vectoriales
 
-## 📱 Capturas de pantalla
+## 🎨 Diseño y Estilo
 
-La aplicación incluye:
-- Encabezado con título y subtítulo
-- Tarjeta destacada con el valor actual de radiación
-- Tres tarjetas de estadísticas (máximo, promedio, mínimo)
-- Gráfico de línea con curva suavizada
-- Sección informativa con datos educativos
+**Inspiración**: Diseño moderno tipo widget similar a aplicaciones de Bjorn Jenssen
+
+**Características visuales**:
+- **Fondo claro**: Color base #f8fafc para una apariencia limpia
+- **Widget principal**: Tarjeta grande con fondo dinámico que cambia de color según el nivel de radiación
+- **Mini widgets**: Dos tarjetas compactas con estadísticas del día
+- **Gráfico minimalista**: Fondo blanco con línea naranja y puntos destacados
+- **Barra de niveles**: Escala horizontal de colores (verde → amarillo → naranja → rojo → púrpura)
+- **Tipografía**: Números grandes y bold, labels en mayúsculas con letter-spacing
+- **Sombras sutiles**: Elevación suave para profundidad sin sobrecargar
+
+## 📊 Niveles de Radiación
+
+| Nivel | Rango (W/m²) | Color | Descripción |
+|-------|--------------|-------|-------------|
+| Bajo | 0-200 | Verde (#10b981) | Protección mínima requerida |
+| Moderado | 200-400 | Amarillo (#f59e0b) | Protección recomendada |
+| Alto | 400-600 | Naranja (#f97316) | Protección necesaria |
+| Muy Alto | 600-800 | Rojo (#ef4444) | Protección extra necesaria |
+| Extremo | 800+ | Púrpura (#a855f7) | Evite exposición al sol |
 
 ## 📝 Notas
 

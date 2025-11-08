@@ -2,15 +2,15 @@
   "expo": {
     "name": "Radiación Solar",
     "slug": "solar-radiation-app",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "dark",
+    "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#0f172a"
+      "backgroundColor": "#f8fafc"
     },
     "ios": {
       "supportsTablet": true,
@@ -19,7 +19,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#0f172a"
+        "backgroundColor": "#f8fafc"
       },
       "edgeToEdgeEnabled": true,
       "package": "com.solarradiation.app"
@@ -27,7 +27,7 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": "Aplicación para visualizar estadísticas de radiación solar durante el día",
+    "description": "Aplicación estilo widget para visualizar estadísticas de radiación solar con diseño moderno iOS",
     "platforms": ["ios", "android", "web"]
   }
 }

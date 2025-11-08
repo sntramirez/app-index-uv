@@ -14,6 +14,59 @@ export default function App() {
     average: 0,
     current: 0
   });
+  const [currentLevel, setCurrentLevel] = useState({
+    label: 'Bajo',
+    color: '#10b981',
+    backgroundColor: '#d1fae5',
+    description: 'Protección mínima requerida'
+  });
+
+  // Función para determinar el nivel de radiación
+  const getRadiationLevel = (value) => {
+    if (value === 0) {
+      return {
+        label: 'Sin radiación',
+        color: '#6b7280',
+        backgroundColor: '#f3f4f6',
+        description: 'No hay radiación solar'
+      };
+    } else if (value < 200) {
+      return {
+        label: 'Bajo',
+        color: '#10b981',
+        backgroundColor: '#d1fae5',
+        description: 'Protección mínima requerida'
+      };
+    } else if (value < 400) {
+      return {
+        label: 'Moderado',
+        color: '#f59e0b',
+        backgroundColor: '#fef3c7',
+        description: 'Protección recomendada'
+      };
+    } else if (value < 600) {
+      return {
+        label: 'Alto',
+        color: '#f97316',
+        backgroundColor: '#ffedd5',
+        description: 'Protección necesaria'
+      };
+    } else if (value < 800) {
+      return {
+        label: 'Muy Alto',
+        color: '#ef4444',
+        backgroundColor: '#fee2e2',
+        description: 'Protección extra necesaria'
+      };
+    } else {
+      return {
+        label: 'Extremo',
+        color: '#a855f7',
+        backgroundColor: '#f3e8ff',
+        description: 'Evite exposición al sol'
+      };
+    }
+  };
 
   useEffect(() => {
     // Generar datos simulados de radiación solar (W/m²)
@@ -52,6 +105,9 @@ export default function App() {
       current: currentValue
     });
 
+    // Establecer el nivel actual
+    setCurrentLevel(getRadiationLevel(currentValue));
+
     // Preparar datos para el gráfico (mostrar cada 2 horas para mejor visualización)
     const chartLabels = hours.filter((_, i) => i % 2 === 0).map(h => `${h}h`);
     const chartData = radiationValues.filter((_, i) => i % 2 === 0);
@@ -71,99 +127,108 @@ export default function App() {
   return (
     <ScrollView style={styles.scrollView}>
       <View style={styles.container}>
-        <StatusBar style="light" />
+        <StatusBar style="dark" />
 
-        {/* Header */}
+        {/* Header minimalista */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>☀️ Radiación Solar</Text>
-          <Text style={styles.headerSubtitle}>Estadísticas del día</Text>
+          <Text style={styles.locationText}>📍 Mi Ubicación</Text>
+          <Text style={styles.dateText}>{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</Text>
         </View>
 
-        {/* Tarjeta de valor actual */}
-        <View style={styles.currentCard}>
-          <Text style={styles.currentLabel}>Radiación Actual</Text>
-          <Text style={styles.currentValue}>{stats.current}</Text>
-          <Text style={styles.currentUnit}>W/m²</Text>
-          <Text style={styles.currentTime}>
-            {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-          </Text>
-        </View>
-
-        {/* Estadísticas */}
-        <View style={styles.statsContainer}>
-          <View style={styles.statBox}>
-            <Text style={styles.statLabel}>Máximo</Text>
-            <Text style={styles.statValue}>{stats.max}</Text>
-            <Text style={styles.statUnit}>W/m²</Text>
+        {/* Widget principal - Tarjeta de valor actual estilo iOS */}
+        <View style={[styles.mainWidget, { backgroundColor: currentLevel.backgroundColor }]}>
+          <Text style={[styles.levelLabel, { color: currentLevel.color }]}>{currentLevel.label}</Text>
+          <View style={styles.valueContainer}>
+            <Text style={[styles.mainValue, { color: currentLevel.color }]}>{stats.current}</Text>
+            <Text style={[styles.mainUnit, { color: currentLevel.color }]}>W/m²</Text>
           </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statLabel}>Promedio</Text>
-            <Text style={styles.statValue}>{stats.average}</Text>
-            <Text style={styles.statUnit}>W/m²</Text>
-          </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statLabel}>Mínimo</Text>
-            <Text style={styles.statValue}>{stats.min}</Text>
-            <Text style={styles.statUnit}>W/m²</Text>
+          <Text style={[styles.levelDescription, { color: currentLevel.color }]}>{currentLevel.description}</Text>
+          <View style={styles.timeContainer}>
+            <Text style={[styles.timeIcon, { color: currentLevel.color }]}>🕐</Text>
+            <Text style={[styles.timeText, { color: currentLevel.color }]}>
+              {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+            </Text>
           </View>
         </View>
 
-        {/* Gráfico */}
-        <View style={styles.chartContainer}>
-          <Text style={styles.chartTitle}>Radiación Solar durante el Día</Text>
+        {/* Mini tarjetas de estadísticas estilo widget */}
+        <View style={styles.statsGrid}>
+          <View style={styles.miniWidget}>
+            <Text style={styles.miniLabel}>Máximo hoy</Text>
+            <Text style={styles.miniValue}>{stats.max}</Text>
+            <Text style={styles.miniUnit}>W/m²</Text>
+          </View>
+          <View style={styles.miniWidget}>
+            <Text style={styles.miniLabel}>Promedio</Text>
+            <Text style={styles.miniValue}>{stats.average}</Text>
+            <Text style={styles.miniUnit}>W/m²</Text>
+          </View>
+        </View>
+
+        {/* Gráfico con diseño limpio */}
+        <View style={styles.chartWidget}>
+          <Text style={styles.chartLabel}>Previsión del día</Text>
           {solarData.datasets[0].data.length > 0 && (
             <LineChart
               data={solarData}
-              width={screenWidth - 40}
-              height={260}
+              width={screenWidth - 60}
+              height={200}
               chartConfig={{
-                backgroundColor: '#1e3a8a',
-                backgroundGradientFrom: '#1e40af',
-                backgroundGradientTo: '#3b82f6',
+                backgroundColor: '#ffffff',
+                backgroundGradientFrom: '#ffffff',
+                backgroundGradientTo: '#ffffff',
                 decimalPlaces: 0,
-                color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+                color: (opacity = 1) => `rgba(245, 158, 11, ${opacity})`,
+                labelColor: (opacity = 1) => `rgba(107, 114, 128, ${opacity})`,
                 style: {
                   borderRadius: 16,
                 },
                 propsForDots: {
-                  r: '4',
+                  r: '3',
                   strokeWidth: '2',
-                  stroke: '#fbbf24'
+                  stroke: '#f59e0b'
                 },
                 propsForBackgroundLines: {
-                  strokeDasharray: '', // solid lines
-                  stroke: 'rgba(255, 255, 255, 0.2)'
+                  strokeDasharray: '',
+                  stroke: 'rgba(229, 231, 235, 1)',
+                  strokeWidth: 1
                 }
               }}
               bezier
               style={styles.chart}
               fromZero={true}
+              withShadow={false}
+              withInnerLines={true}
+              withOuterLines={false}
             />
           )}
         </View>
 
-        {/* Información adicional */}
-        <View style={styles.infoContainer}>
-          <Text style={styles.infoTitle}>📊 Información</Text>
-          <Text style={styles.infoText}>
-            • La radiación solar se mide en Watts por metro cuadrado (W/m²)
-          </Text>
-          <Text style={styles.infoText}>
-            • Los valores típicos van de 0 a 1000 W/m² en días soleados
-          </Text>
-          <Text style={styles.infoText}>
-            • El pico de radiación ocurre generalmente al mediodía
-          </Text>
-          <Text style={styles.infoText}>
-            • Estos datos son simulados con fines demostrativos
-          </Text>
+        {/* Barra de niveles de referencia */}
+        <View style={styles.levelBar}>
+          <Text style={styles.levelBarTitle}>Niveles de radiación</Text>
+          <View style={styles.levelBarContainer}>
+            <View style={[styles.levelSegment, { backgroundColor: '#10b981', flex: 1 }]}>
+              <Text style={styles.levelSegmentText}>Bajo</Text>
+            </View>
+            <View style={[styles.levelSegment, { backgroundColor: '#f59e0b', flex: 1 }]}>
+              <Text style={styles.levelSegmentText}>Moderado</Text>
+            </View>
+            <View style={[styles.levelSegment, { backgroundColor: '#f97316', flex: 1 }]}>
+              <Text style={styles.levelSegmentText}>Alto</Text>
+            </View>
+            <View style={[styles.levelSegment, { backgroundColor: '#ef4444', flex: 1 }]}>
+              <Text style={styles.levelSegmentText}>Muy Alto</Text>
+            </View>
+            <View style={[styles.levelSegment, { backgroundColor: '#a855f7', flex: 1 }]}>
+              <Text style={styles.levelSegmentText}>Extremo</Text>
+            </View>
+          </View>
         </View>
 
+        {/* Footer discreto */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            Actualizado: {new Date().toLocaleDateString('es-ES')}
-          </Text>
+          <Text style={styles.footerText}>Datos simulados con fines demostrativos</Text>
         </View>
       </View>
     </ScrollView>
@@ -173,144 +238,193 @@ export default function App() {
 const styles = StyleSheet.create({
   scrollView: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#f8fafc',
   },
   container: {
     flex: 1,
-    backgroundColor: '#0f172a',
+    backgroundColor: '#f8fafc',
     paddingBottom: 30,
   },
   header: {
-    backgroundColor: '#1e40af',
     paddingTop: 60,
-    paddingBottom: 30,
-    paddingHorizontal: 20,
-    borderBottomLeftRadius: 30,
-    borderBottomRightRadius: 30,
+    paddingBottom: 20,
+    paddingHorizontal: 30,
+    backgroundColor: '#f8fafc',
+  },
+  locationText: {
+    fontSize: 14,
+    color: '#64748b',
+    fontWeight: '500',
+    marginBottom: 4,
+  },
+  dateText: {
+    fontSize: 15,
+    color: '#94a3b8',
+    textTransform: 'capitalize',
+  },
+  mainWidget: {
+    marginHorizontal: 30,
+    marginTop: 20,
+    padding: 30,
+    borderRadius: 28,
+    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 8,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
-  headerTitle: {
-    fontSize: 32,
-    fontWeight: 'bold',
-    color: '#fff',
-    textAlign: 'center',
+  levelLabel: {
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 15,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
-  headerSubtitle: {
-    fontSize: 16,
-    color: '#bfdbfe',
-    textAlign: 'center',
+  valueContainer: {
+    flexDirection: 'row',
+    alignItems: 'baseline',
+    marginBottom: 12,
+  },
+  mainValue: {
+    fontSize: 72,
+    fontWeight: '800',
+    letterSpacing: -2,
+  },
+  mainUnit: {
+    fontSize: 22,
+    fontWeight: '600',
+    marginLeft: 8,
+    opacity: 0.7,
+  },
+  levelDescription: {
+    fontSize: 15,
+    fontWeight: '500',
+    marginBottom: 15,
+    opacity: 0.8,
+  },
+  timeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     marginTop: 5,
   },
-  currentCard: {
-    backgroundColor: '#1e3a8a',
-    marginHorizontal: 20,
-    marginTop: 20,
-    padding: 25,
+  timeIcon: {
+    fontSize: 16,
+    marginRight: 6,
+  },
+  timeText: {
+    fontSize: 15,
+    fontWeight: '600',
+    opacity: 0.7,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    marginHorizontal: 30,
+    marginTop: 15,
+    gap: 15,
+  },
+  miniWidget: {
+    flex: 1,
+    backgroundColor: '#ffffff',
+    padding: 20,
     borderRadius: 20,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  currentLabel: {
-    fontSize: 16,
-    color: '#93c5fd',
-    marginBottom: 10,
-  },
-  currentValue: {
-    fontSize: 64,
-    fontWeight: 'bold',
-    color: '#fbbf24',
-  },
-  currentUnit: {
-    fontSize: 20,
-    color: '#93c5fd',
-    marginTop: -5,
-  },
-  currentTime: {
-    fontSize: 14,
-    color: '#60a5fa',
-    marginTop: 10,
-  },
-  statsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginHorizontal: 20,
-    marginTop: 20,
-  },
-  statBox: {
-    backgroundColor: '#1e293b',
-    padding: 15,
-    borderRadius: 15,
-    alignItems: 'center',
-    flex: 1,
-    marginHorizontal: 5,
-    borderWidth: 1,
-    borderColor: '#334155',
-  },
-  statLabel: {
+  miniLabel: {
     fontSize: 12,
+    color: '#64748b',
+    fontWeight: '500',
+    marginBottom: 8,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  miniValue: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1e293b',
+    marginBottom: 2,
+  },
+  miniUnit: {
+    fontSize: 11,
     color: '#94a3b8',
-    marginBottom: 5,
+    fontWeight: '500',
   },
-  statValue: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#fff',
+  chartWidget: {
+    marginHorizontal: 30,
+    marginTop: 20,
+    padding: 20,
+    backgroundColor: '#ffffff',
+    borderRadius: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  statUnit: {
-    fontSize: 10,
-    color: '#94a3b8',
-    marginTop: 2,
-  },
-  chartContainer: {
-    marginTop: 25,
-    marginHorizontal: 20,
-  },
-  chartTitle: {
-    fontSize: 18,
+  chartLabel: {
+    fontSize: 14,
     fontWeight: '600',
-    color: '#fff',
+    color: '#1e293b',
     marginBottom: 15,
-    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   chart: {
     borderRadius: 16,
-    marginVertical: 8,
+    marginLeft: -15,
   },
-  infoContainer: {
-    backgroundColor: '#1e293b',
-    marginHorizontal: 20,
-    marginTop: 25,
+  levelBar: {
+    marginHorizontal: 30,
+    marginTop: 20,
     padding: 20,
-    borderRadius: 15,
-    borderWidth: 1,
-    borderColor: '#334155',
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
   },
-  infoTitle: {
-    fontSize: 18,
+  levelBarTitle: {
+    fontSize: 12,
     fontWeight: '600',
-    color: '#fff',
+    color: '#64748b',
     marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
-  infoText: {
-    fontSize: 13,
-    color: '#cbd5e1',
-    marginBottom: 8,
-    lineHeight: 20,
+  levelBarContainer: {
+    flexDirection: 'row',
+    height: 50,
+    borderRadius: 12,
+    overflow: 'hidden',
+  },
+  levelSegment: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 5,
+  },
+  levelSegmentText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: '700',
+    textAlign: 'center',
+    textTransform: 'uppercase',
+    letterSpacing: 0.3,
   },
   footer: {
-    marginTop: 20,
+    marginTop: 25,
+    marginBottom: 10,
     alignItems: 'center',
   },
   footerText: {
-    fontSize: 12,
-    color: '#64748b',
+    fontSize: 11,
+    color: '#94a3b8',
+    fontStyle: 'italic',
   },
 });
