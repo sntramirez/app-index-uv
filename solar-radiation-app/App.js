@@ -1,5 +1,5 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Modal } from 'react-native';
 import { LineChart } from 'react-native-chart-kit';
 import { useState, useEffect } from 'react';
 import solarDataJson from './data/solarData.json';
@@ -26,6 +26,8 @@ export default function App() {
     condition: '',
     uvIndex: 0
   });
+  const [currentTime, setCurrentTime] = useState(new Date());
+  const [menuVisible, setMenuVisible] = useState(false);
 
   // Función para determinar el nivel de radiación
   const getRadiationLevel = (value) => {
@@ -74,9 +76,27 @@ export default function App() {
     }
   };
 
+  // Actualizar hora cada minuto
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // Actualizar cada minuto
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // Función para obtener la hora de Ecuador
+  const getEcuadorTime = () => {
+    const now = new Date();
+    // Ecuador está en UTC-5 (ECT - Ecuador Time)
+    const ecuadorTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Guayaquil' }));
+    return ecuadorTime;
+  };
+
   useEffect(() => {
     // Cargar datos desde el archivo JSON
-    const currentHour = new Date().getHours();
+    const ecuadorTime = getEcuadorTime();
+    const currentHour = ecuadorTime.getHours();
 
     // Usar el primer día del array (día actual)
     const todayData = solarDataJson.days[0];
@@ -125,18 +145,58 @@ export default function App() {
   }, []);
 
   const screenWidth = Dimensions.get('window').width;
+  const ecuadorTime = getEcuadorTime();
 
   return (
-    <ScrollView style={styles.scrollView}>
-      <View style={styles.container}>
-        <StatusBar style="dark" />
+    <View style={styles.container}>
+      <StatusBar style="dark" />
 
-        {/* Header minimalista */}
-        <View style={styles.header}>
-          <Text style={styles.locationText}>📍 {locationInfo.city}</Text>
-          <Text style={styles.dateText}>{new Date().toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}</Text>
-          <Text style={styles.conditionText}>{locationInfo.condition} · UV Index: {locationInfo.uvIndex}</Text>
+      {/* Header minimalista con menú */}
+      <View style={styles.header}>
+        <View style={styles.headerTop}>
+          <View>
+            <Text style={styles.locationText}>📍 {locationInfo.city}</Text>
+            <Text style={styles.dateText}>{ecuadorTime.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}</Text>
+          </View>
+          <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.menuButton}>
+            <Text style={styles.menuIcon}>☰</Text>
+          </TouchableOpacity>
         </View>
+        <Text style={styles.conditionText}>{locationInfo.condition} · UV: {locationInfo.uvIndex}</Text>
+      </View>
+
+      {/* Modal del menú */}
+      <Modal
+        visible={menuVisible}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setMenuVisible(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setMenuVisible(false)}
+        >
+          <View style={styles.menuContainer}>
+            <Text style={styles.menuTitle}>Configuración</Text>
+            <TouchableOpacity style={styles.menuItem}>
+              <Text style={styles.menuItemText}>📍 Cambiar ubicación</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem}>
+              <Text style={styles.menuItemText}>🔔 Notificaciones</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.menuItem}>
+              <Text style={styles.menuItemText}>ℹ️ Acerca de</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuItemClose}
+              onPress={() => setMenuVisible(false)}
+            >
+              <Text style={styles.menuItemCloseText}>Cerrar</Text>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
 
         {/* Widget principal - Tarjeta de valor actual estilo iOS */}
         <View style={[styles.mainWidget, { backgroundColor: currentLevel.backgroundColor }]}>
@@ -145,11 +205,14 @@ export default function App() {
             <Text style={[styles.mainValue, { color: currentLevel.color }]}>{stats.current}</Text>
             <Text style={[styles.mainUnit, { color: currentLevel.color }]}>W/m²</Text>
           </View>
-          <Text style={[styles.levelDescription, { color: currentLevel.color }]}>{currentLevel.description}</Text>
           <View style={styles.timeContainer}>
             <Text style={[styles.timeIcon, { color: currentLevel.color }]}>🕐</Text>
             <Text style={[styles.timeText, { color: currentLevel.color }]}>
-              {new Date().toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
+              {ecuadorTime.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit',
+                timeZone: 'America/Guayaquil'
+              })}
             </Text>
           </View>
         </View>
@@ -175,7 +238,7 @@ export default function App() {
             <LineChart
               data={solarData}
               width={screenWidth - 66}
-              height={180}
+              height={140}
               chartConfig={{
                 backgroundColor: '#ffffff',
                 backgroundGradientFrom: '#ffffff',
@@ -209,87 +272,121 @@ export default function App() {
 
         {/* Barra de niveles de referencia */}
         <View style={styles.levelBar}>
-          <Text style={styles.levelBarTitle}>Niveles de radiación</Text>
           <View style={styles.levelBarContainer}>
             <View style={[styles.levelSegment, { backgroundColor: '#10b981', flex: 1 }]}>
               <Text style={styles.levelSegmentText}>Bajo</Text>
             </View>
             <View style={[styles.levelSegment, { backgroundColor: '#f59e0b', flex: 1 }]}>
-              <Text style={styles.levelSegmentText}>Moderado</Text>
+              <Text style={styles.levelSegmentText}>Mod</Text>
             </View>
             <View style={[styles.levelSegment, { backgroundColor: '#f97316', flex: 1 }]}>
               <Text style={styles.levelSegmentText}>Alto</Text>
             </View>
             <View style={[styles.levelSegment, { backgroundColor: '#ef4444', flex: 1 }]}>
-              <Text style={styles.levelSegmentText}>Muy Alto</Text>
+              <Text style={styles.levelSegmentText}>M.Alto</Text>
             </View>
             <View style={[styles.levelSegment, { backgroundColor: '#a855f7', flex: 1 }]}>
-              <Text style={styles.levelSegmentText}>Extremo</Text>
+              <Text style={styles.levelSegmentText}>Ext</Text>
             </View>
           </View>
         </View>
-
-        {/* Recomendaciones */}
-        <View style={styles.recommendationBox}>
-          <Text style={styles.recommendationTitle}>💡 Recomendación</Text>
-          <Text style={styles.recommendationText}>
-            {currentLevel.description}
-          </Text>
-        </View>
-
-        {/* Footer discreto */}
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            Última actualización: {new Date(solarDataJson.lastUpdated).toLocaleTimeString('es-ES', {
-              hour: '2-digit',
-              minute: '2-digit'
-            })}
-          </Text>
-          <Text style={styles.footerText}>Datos simulados · {solarDataJson.location.city}</Text>
-        </View>
-      </View>
-    </ScrollView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    flex: 1,
-    backgroundColor: '#f8fafc',
-  },
   container: {
     flex: 1,
     backgroundColor: '#f8fafc',
-    paddingBottom: 20,
   },
   header: {
     paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 25,
+    paddingBottom: 10,
+    paddingHorizontal: 20,
     backgroundColor: '#f8fafc',
   },
-  locationText: {
-    fontSize: 14,
+  headerTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    marginBottom: 6,
+  },
+  menuButton: {
+    padding: 8,
+    backgroundColor: '#ffffff',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  menuIcon: {
+    fontSize: 20,
     color: '#64748b',
-    fontWeight: '500',
-    marginBottom: 4,
   },
-  dateText: {
-    fontSize: 15,
-    color: '#94a3b8',
-    textTransform: 'capitalize',
-    marginBottom: 4,
-  },
-  conditionText: {
+  locationText: {
     fontSize: 13,
     color: '#64748b',
+    fontWeight: '600',
+    marginBottom: 2,
+  },
+  dateText: {
+    fontSize: 12,
+    color: '#94a3b8',
+    textTransform: 'capitalize',
+  },
+  conditionText: {
+    fontSize: 12,
+    color: '#64748b',
     fontWeight: '500',
   },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  menuContainer: {
+    backgroundColor: '#ffffff',
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    padding: 24,
+    paddingBottom: 40,
+  },
+  menuTitle: {
+    fontSize: 20,
+    fontWeight: '700',
+    color: '#1e293b',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  menuItem: {
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f1f5f9',
+  },
+  menuItemText: {
+    fontSize: 16,
+    color: '#475569',
+    fontWeight: '500',
+  },
+  menuItemClose: {
+    marginTop: 12,
+    paddingVertical: 16,
+    backgroundColor: '#1e40af',
+    borderRadius: 12,
+    alignItems: 'center',
+  },
+  menuItemCloseText: {
+    fontSize: 16,
+    color: '#ffffff',
+    fontWeight: '600',
+  },
   mainWidget: {
-    marginHorizontal: 25,
-    marginTop: 15,
-    padding: 25,
-    borderRadius: 24,
+    marginHorizontal: 20,
+    marginTop: 10,
+    padding: 18,
+    borderRadius: 20,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 4 },
@@ -298,59 +395,53 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   levelLabel: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '700',
-    marginBottom: 10,
+    marginBottom: 6,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },
   valueContainer: {
     flexDirection: 'row',
     alignItems: 'baseline',
-    marginBottom: 8,
+    marginBottom: 4,
   },
   mainValue: {
-    fontSize: 60,
+    fontSize: 50,
     fontWeight: '800',
     letterSpacing: -2,
   },
   mainUnit: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
-    marginLeft: 6,
+    marginLeft: 5,
     opacity: 0.7,
-  },
-  levelDescription: {
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 10,
-    opacity: 0.8,
   },
   timeContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: 2,
   },
   timeIcon: {
-    fontSize: 16,
-    marginRight: 6,
+    fontSize: 14,
+    marginRight: 4,
   },
   timeText: {
-    fontSize: 15,
+    fontSize: 13,
     fontWeight: '600',
     opacity: 0.7,
   },
   statsGrid: {
     flexDirection: 'row',
-    marginHorizontal: 25,
-    marginTop: 12,
-    gap: 12,
+    marginHorizontal: 20,
+    marginTop: 8,
+    gap: 10,
   },
   miniWidget: {
     flex: 1,
     backgroundColor: '#ffffff',
-    padding: 16,
-    borderRadius: 18,
+    padding: 12,
+    borderRadius: 16,
     alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -359,52 +450,28 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   miniLabel: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#64748b',
     fontWeight: '500',
-    marginBottom: 6,
+    marginBottom: 4,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   miniValue: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: '700',
     color: '#1e293b',
-    marginBottom: 2,
+    marginBottom: 1,
   },
   miniUnit: {
-    fontSize: 11,
+    fontSize: 10,
     color: '#94a3b8',
     fontWeight: '500',
   },
   chartWidget: {
-    marginHorizontal: 25,
-    marginTop: 15,
-    padding: 16,
-    backgroundColor: '#ffffff',
-    borderRadius: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  chartLabel: {
-    fontSize: 13,
-    fontWeight: '600',
-    color: '#1e293b',
-    marginBottom: 12,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  chart: {
-    borderRadius: 16,
-    marginLeft: -15,
-  },
-  levelBar: {
-    marginHorizontal: 25,
-    marginTop: 15,
-    padding: 16,
+    marginHorizontal: 20,
+    marginTop: 10,
+    padding: 12,
     backgroundColor: '#ffffff',
     borderRadius: 18,
     shadowColor: '#000',
@@ -413,18 +480,35 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 2,
   },
-  levelBarTitle: {
+  chartLabel: {
     fontSize: 11,
     fontWeight: '600',
-    color: '#64748b',
-    marginBottom: 10,
+    color: '#1e293b',
+    marginBottom: 8,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
+  chart: {
+    borderRadius: 14,
+    marginLeft: -12,
+  },
+  levelBar: {
+    marginHorizontal: 20,
+    marginTop: 10,
+    marginBottom: 10,
+    padding: 12,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 2,
+  },
   levelBarContainer: {
     flexDirection: 'row',
-    height: 44,
-    borderRadius: 10,
+    height: 36,
+    borderRadius: 8,
     overflow: 'hidden',
   },
   levelSegment: {
@@ -434,42 +518,10 @@ const styles = StyleSheet.create({
   },
   levelSegmentText: {
     color: '#ffffff',
-    fontSize: 9,
+    fontSize: 8,
     fontWeight: '700',
     textAlign: 'center',
     textTransform: 'uppercase',
-    letterSpacing: 0.3,
-  },
-  recommendationBox: {
-    marginHorizontal: 25,
-    marginTop: 15,
-    padding: 16,
-    backgroundColor: '#eff6ff',
-    borderRadius: 16,
-    borderLeftWidth: 3,
-    borderLeftColor: '#3b82f6',
-  },
-  recommendationTitle: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#1e40af',
-    marginBottom: 6,
-  },
-  recommendationText: {
-    fontSize: 12,
-    color: '#1e40af',
-    lineHeight: 18,
-  },
-  footer: {
-    marginTop: 20,
-    marginBottom: 20,
-    alignItems: 'center',
-    paddingHorizontal: 25,
-  },
-  footerText: {
-    fontSize: 10,
-    color: '#94a3b8',
-    fontStyle: 'italic',
-    marginBottom: 2,
+    letterSpacing: 0.2,
   },
 });
