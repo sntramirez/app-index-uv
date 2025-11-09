@@ -87,25 +87,72 @@ export default function App() {
 
   // Función para obtener la hora de Ecuador
   const getEcuadorTime = () => {
-    const now = new Date();
-    // Ecuador está en UTC-5 (ECT - Ecuador Time)
-    const ecuadorTime = new Date(now.toLocaleString('en-US', { timeZone: 'America/Guayaquil' }));
-    return ecuadorTime;
+    try {
+      const formatter = new Intl.DateTimeFormat('en-US', {
+        timeZone: 'America/Guayaquil',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: false
+      });
+
+      const parts = formatter.formatToParts(new Date());
+      const values = {};
+      parts.forEach(part => {
+        if (part.type !== 'literal') {
+          values[part.type] = parseInt(part.value);
+        }
+      });
+
+      return {
+        hours: values.hour,
+        minutes: values.minute,
+        date: new Date(),
+        toLocaleTimeString: (locale, options) => {
+          return new Date().toLocaleTimeString(locale, {
+            ...options,
+            timeZone: 'America/Guayaquil'
+          });
+        },
+        toLocaleDateString: (locale, options) => {
+          return new Date().toLocaleDateString(locale, {
+            ...options,
+            timeZone: 'America/Guayaquil'
+          });
+        }
+      };
+    } catch (error) {
+      // Si hay error, usar hora local
+      const now = new Date();
+      return {
+        hours: now.getHours(),
+        minutes: now.getMinutes(),
+        date: now,
+        toLocaleTimeString: (locale, options) => now.toLocaleTimeString(locale, options),
+        toLocaleDateString: (locale, options) => now.toLocaleDateString(locale, options)
+      };
+    }
   };
 
   useEffect(() => {
     // Cargar datos desde el archivo JSON
     const ecuadorTime = getEcuadorTime();
-    const currentHour = ecuadorTime.getHours();
+    const currentHour = ecuadorTime.hours;
 
     // Usar el primer día del array (día actual)
     const todayData = solarDataJson.days[0];
 
+    // Validar que currentHour esté en rango válido
+    const safeHour = Math.max(0, Math.min(23, currentHour));
+
     // Extraer valores de radiación por hora
     const radiationValues = todayData.hourlyData.map(item => item.radiation);
 
-    // Obtener el valor actual según la hora
-    const currentValue = todayData.hourlyData[currentHour].radiation;
+    // Obtener el valor actual según la hora (con validación)
+    const currentValue = todayData.hourlyData[safeHour] ? todayData.hourlyData[safeHour].radiation : 0;
 
     // Establecer estadísticas desde el JSON
     setStats({
@@ -145,7 +192,6 @@ export default function App() {
   }, []);
 
   const screenWidth = Dimensions.get('window').width;
-  const ecuadorTime = getEcuadorTime();
 
   return (
     <View style={styles.container}>
@@ -156,7 +202,14 @@ export default function App() {
         <View style={styles.headerTop}>
           <View>
             <Text style={styles.locationText}>📍 {locationInfo.city}</Text>
-            <Text style={styles.dateText}>{ecuadorTime.toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}</Text>
+            <Text style={styles.dateText}>
+              {new Date().toLocaleDateString('es-ES', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+                timeZone: 'America/Guayaquil'
+              })}
+            </Text>
           </View>
           <TouchableOpacity onPress={() => setMenuVisible(true)} style={styles.menuButton}>
             <Text style={styles.menuIcon}>☰</Text>
@@ -208,7 +261,7 @@ export default function App() {
           <View style={styles.timeContainer}>
             <Text style={[styles.timeIcon, { color: currentLevel.color }]}>🕐</Text>
             <Text style={[styles.timeText, { color: currentLevel.color }]}>
-              {ecuadorTime.toLocaleTimeString('es-ES', {
+              {new Date().toLocaleTimeString('es-ES', {
                 hour: '2-digit',
                 minute: '2-digit',
                 timeZone: 'America/Guayaquil'
